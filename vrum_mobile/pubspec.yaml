@@ -21,8 +21,8 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  geocoding: ^1.0.5
-  geolocator: ^6.1.1
+  background_location: ^0.4.1
+  rxdart: ^0.26.0
   flutter:
     sdk: flutter
 

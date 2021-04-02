@@ -1,5 +1,6 @@
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:vrum_mobile/Location.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -8,9 +9,11 @@ void main() {
   ));
 }
 
-Position _currentPosition;
-
+bool allowLocation = false;
+final LocationProvider locationProvider = LocationProvider(10);
+final locationStream = locationProvider.locationStream;
 class FirstRoute extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,19 +55,47 @@ class PedestrianRoute extends StatelessWidget {
       appBar: AppBar(
         title: Text("Pedestrian"),
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Back'),
-        ),
+      body: Column(
+        children: <Widget>[
+        Center(
+          child: Column (
+            children: [ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Back'),
+
+            ),
+              StreamBuilder<Location>(
+                  stream: locationStream,
+                  builder: (context, snapshot) {
+                    if(allowLocation) {
+                      return Text(
+                        "Latitude: ${snapshot.data?.latitude}, Latitude: ${snapshot.data?.longitude}",
+                      );
+                    }
+                    else {
+                      return Text(
+                        "Latitude: null, Longitude: null",
+                      );
+                    }
+                  }
+              ),
+              ElevatedButton(
+                onPressed: () {allowLocation = true;},
+                child: Text("Get Location"),
+              ),
+            ],
+          )
       ),
+      ],
+    ),
     );
   }
 }
 
-class CarRoute extends StatefulWidget {
+class CarRoute extends StatelessWidget {
+  // UpdateTextState createState() => UpdateTextState();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,22 +104,37 @@ class CarRoute extends StatefulWidget {
       ),
       body: Column(
       children: <Widget>[
-        Text(
-        "LAT: ${_currentPosition.latitude}, LNG: ${_currentPosition.longitude}"
-        ),
-        ElevatedButton(
-          child: Text("Get location"),
-          onPressed: () {
-            _getCurrentLocation();
-          },
-        ),
+
         Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Back'),
-          ),
+          child: Column (
+            children: [ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Back'),
+
+            ),
+              StreamBuilder<Location>(
+                  stream: locationStream,
+                  builder: (context, snapshot) {
+                    if(allowLocation) {
+                      return Text(
+                        "Latitude: ${snapshot.data?.latitude}, Latitude: ${snapshot.data?.longitude}",
+                      );
+                    }
+                    else {
+                      return Text(
+                          "Latitude: null, Longitude: null",
+                      );
+                    }
+                  }
+              ),
+              ElevatedButton(
+                onPressed: () {allowLocation = true;},
+                child: Text("Get Location"),
+              ),
+            ],
+          )
         ),
       ],
     ),
@@ -96,20 +142,11 @@ class CarRoute extends StatefulWidget {
 
   }
 
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
+  // @override
+  // State<StatefulWidget> createState() {
+  //   // TODO: implement createState
+  //   throw UnimplementedError();
+  // }
 }
 
-  _getCurrentLocation() async {
-    try {
-      var currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
-    } catch (e) {
-      _currentPosition = null;
-    }
-    return _currentPosition;
-  }
 
