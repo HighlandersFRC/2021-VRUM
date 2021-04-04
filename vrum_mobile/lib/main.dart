@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:vrum_mobile/Location.dart';
@@ -49,6 +51,9 @@ class FirstRoute extends StatelessWidget {
 }
 
 class PedestrianRoute extends StatelessWidget {
+  void sentPSM() async {
+    print('Sent PSM');
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,6 +71,7 @@ class PedestrianRoute extends StatelessWidget {
               child: Text('Back'),
 
             ),
+            new Timer().scheduleAtFixedRate(sentPSM(), 0, 5000);
               StreamBuilder<Location>(
                   stream: locationStream,
                   builder: (context, snapshot) {
