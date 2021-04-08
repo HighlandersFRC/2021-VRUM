@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +52,15 @@ class FirstRoute extends StatelessWidget {
 }
 
 class PedestrianRoute extends StatelessWidget {
-  void sentPSM() async {
+  void sendPSM() async {
     print('Sent PSM');
   }
+  // void main() {
+  //   const time = const Duration(seconds: 30);
+  //   Timer.periodic(time, (Timer timer) {
+  //     sendPSM();
+  //   });
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +78,9 @@ class PedestrianRoute extends StatelessWidget {
               child: Text('Back'),
 
             ),
-            new Timer().scheduleAtFixedRate(sentPSM(), 0, 5000);
+              // var time = const Duration(//milliseconds: // // seconds: // // minutes: // ...);
+              //   Timer.periodic(time, (timer) => {sentPSM()}
+              // ),
               StreamBuilder<Location>(
                   stream: locationStream,
                   builder: (context, snapshot) {
@@ -91,6 +100,14 @@ class PedestrianRoute extends StatelessWidget {
                 onPressed: () {allowLocation = true;},
                 child: Text("Get Location"),
               ),
+              ElevatedButton(
+                child: Text("Button to Post"),
+                onPressed: () {
+                  HttpClient client = new HttpClient();
+                  client.postUrl(Uri.parse("http://127.0.0.1:8000///user_location/?longitude=-104.8405004&latitude=41.1394557&user_id=2000"));
+                  print("sent response");
+                }
+              )
             ],
           )
       ),
