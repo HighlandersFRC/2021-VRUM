@@ -104,7 +104,17 @@ class PedestrianRoute extends StatelessWidget {
                 child: Text("Button to Post"),
                 onPressed: () {
                   HttpClient client = new HttpClient();
-                  client.postUrl(Uri.parse("http://127.0.0.1:8000///user_location/?longitude=-104.8405004&latitude=41.1394557&user_id=2000"));
+                  client.postUrl(Uri.parse("https://vrum-rest-api.azurewebsites.net/user_location/?longitude=-104.8405004&latitude=41.1394557&user_id=4000"))
+                      .then((HttpClientRequest request) {
+                    // Optionally set up headers...
+                    // Optionally write to the request object...
+                    // Then call close.
+                    return request.close();
+                  })
+                      .then((HttpClientResponse response) {
+                    // Process the response.
+                    print(response);
+                  });
                   print("sent response");
                 }
               )
