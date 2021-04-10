@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:vrum_mobile/Location.dart';
+import 'package:vrum_mobile/generatePSM.dart';
+import 'package:vrum_mobile/getPSM.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -13,7 +15,7 @@ void main() {
 }
 
 bool allowLocation = false;
-final LocationProvider locationProvider = LocationProvider(10);
+final LocationProvider locationProvider = LocationProvider();
 final locationStream = locationProvider.locationStream;
 class FirstRoute extends StatelessWidget {
 
@@ -97,28 +99,12 @@ class PedestrianRoute extends StatelessWidget {
                   }
               ),
               ElevatedButton(
-                onPressed: () {allowLocation = true;},
+                onPressed: () {
+                  allowLocation = true;
+                  generatePSM(locationStream);
+                },
                 child: Text("Get Location"),
               ),
-              ElevatedButton(
-                child: Text("Button to Post"),
-                onPressed: () {
-                  HttpClient client = new HttpClient();
-                  client.postUrl(Uri.parse("https://vrum-rest-api.azurewebsites.net/user_location/?longitude=-104.8405004&latitude=41.1394557&user_id=555"))
-                      .then((HttpClientRequest request) {
-                    // Optionally set up headers...
-                    request.headers.add("apikey",'9994912f-7d93-402a-9d55-77d7c748704c');
-                    // Optionally write to the request object...
-                    // Then call close.
-                    return request.close();
-                  })
-                      .then((HttpClientResponse response) {
-                    // Process the response.
-                    print(response);
-                  });
-                  print("sent response");
-                }
-              )
             ],
           )
       ),
@@ -163,7 +149,9 @@ class CarRoute extends StatelessWidget {
                   }
               ),
               ElevatedButton(
-                onPressed: () {allowLocation = true;},
+                onPressed: () {
+                  getPSM(locationStream);
+                  allowLocation = true;},
                 child: Text("Get Location"),
               ),
             ],
