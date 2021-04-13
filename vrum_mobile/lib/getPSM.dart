@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:audioplayer/audioplayer.dart';
 import 'package:background_location/background_location.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:maps_toolkit/maps_toolkit.dart';
 import 'package:rxdart/rxdart.dart';
@@ -8,6 +10,7 @@ import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class getPSM {
+  FlutterTts flutterTts = FlutterTts();
   HttpClient client = new HttpClient();
   int prevTime = DateTime.now().millisecondsSinceEpoch;
   getPSM(BehaviorSubject<Location> LocationStream) {
@@ -34,7 +37,8 @@ class getPSM {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
       final deltaDistance = SphericalUtil.computeDistanceBetween(LatLng(latitude, longitude), (LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       if(deltaDistance < 50) {
-        Fluttertoast.showToast(msg: "You are near a pedestrian", toastLength: Toast.LENGTH_SHORT);
+        //Fluttertoast.showToast(msg: "You are near a pedestrian", toastLength: Toast.LENGTH_SHORT);
+        flutterTts.speak("You are near a pedestrian!");
         break;
       }
       print(psmFromJSON.toJson());
