@@ -155,6 +155,17 @@ class CarRoute extends StatelessWidget {
                   allowLocation = true;},
                 child: Text("Get Location"),
               ),
+              Container(
+                height: 600,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                      bearing: 180,
+                      target: LatLng(47, -105),
+                      zoom: 15
+                  ),
+                ),
+              ),
             ],
           )
         ),
