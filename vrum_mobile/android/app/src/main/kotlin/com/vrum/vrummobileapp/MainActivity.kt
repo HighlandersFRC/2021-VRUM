@@ -1,4 +1,4 @@
-package com.example.vrum_mobile
+package com.vrum.vrummobileapp
 
 import io.flutter.embedding.android.FlutterActivity
 
