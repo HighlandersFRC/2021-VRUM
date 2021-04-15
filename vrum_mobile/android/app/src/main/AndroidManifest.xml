@@ -4,6 +4,7 @@
         android:label="vrum_mobile"
         android:icon="@mipmap/ic_launcher">
 
+
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAOs8o5kASzQFST-D9kJsOMCnIgciFtz_c"/>
         <activity
@@ -30,6 +31,7 @@
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
               android:resource="@drawable/launch_background"
               />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -41,4 +43,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 </manifest>
