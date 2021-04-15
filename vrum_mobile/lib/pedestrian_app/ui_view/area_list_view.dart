@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../pedestrian_app_theme.dart';
 
 class AreaListView extends StatefulWidget {
@@ -73,6 +74,13 @@ class _AreaListViewState extends State<AreaListView>
                         imagepath: areaListData[index],
                         animation: animation,
                         animationController: animationController,
+                        onPressed: () {
+                          Fluttertoast.showToast(
+                              msg: "Pressed Button $index",
+                              toastLength: Toast.LENGTH_SHORT,
+                          );
+                          
+                        }
                       );
                     },
                   ),
@@ -98,11 +106,13 @@ class AreaView extends StatelessWidget {
     this.imagepath,
     this.animationController,
     this.animation,
+    this.onPressed,
   }) : super(key: key);
 
   final String imagepath;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +147,7 @@ class AreaView extends StatelessWidget {
                   hoverColor: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   splashColor: FitnessAppTheme.nearlyDarkBlue.withOpacity(0.2),
-                  onTap: () {},
+                  onTap: onPressed,
                   child: Column(
                     children: <Widget>[
                       Padding(
