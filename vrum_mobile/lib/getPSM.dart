@@ -1,20 +1,36 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:background_location/background_location.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:maps_toolkit/maps_toolkit.dart';
+import 'package:maps_toolkit/maps_toolkit.dart' as mapsToolkit;
 import 'package:rxdart/rxdart.dart';
 import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class getPSM {
+class GetPSM {
   FlutterTts flutterTts = FlutterTts();
   HttpClient client = new HttpClient();
   int prevTime = DateTime.now().millisecondsSinceEpoch;
   int prevNotiTime = DateTime.now().millisecondsSinceEpoch;
-  getPSM(BehaviorSubject<Location> LocationStream) {
-    LocationStream.listen((location) {timePSM(location);});
+  BehaviorSubject<Set<Marker>> vehicleMarkersStream = BehaviorSubject<Set<Marker>>();
+  StreamSubscription<Location> locationSub;
+
+  GetPSM() {
+
+  }
+
+  startLocationUpdates(BehaviorSubject<Location> LocationStream) {
+    locationSub = LocationStream.listen((location) {timePSM(location);});
+  }
+
+  stopLocationUpdates() {
+    if (locationSub != null) {
+      locationSub.cancel();
+    }
   }
 
   timePSM(Location location, {int intervalSeconds = 1}) {
@@ -40,10 +56,32 @@ class getPSM {
     final body = response.body;
     final jsonBody = JsonDecoder().convert(body);
     print(jsonBody);
+    final markers = Set<Marker>.of([]);
+    final ids = [];
+    final rng = new Random();
+    for (final psm in jsonBody['psms']) {
+      final psmFromJSON = PersonalSafetyMessage.fromJson(psm);
+      if (ids.contains(psmFromJSON.id)) {
+        continue;
+      }
+      else {
+        ids.add(psmFromJSON.id);
+      }
+      Marker marker = Marker(
+        markerId: MarkerId(psmFromJSON.id),
+        position: LatLng(
+          psmFromJSON.position.lat + rng.nextDouble()/1000,
+          psmFromJSON.position.lon + rng.nextDouble()/1000,
+        ),
+      );
+      markers.add(marker);
+    }
+    vehicleMarkersStream.add(markers);
+
     for(final i in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
-      final deltaDistance = SphericalUtil.computeDistanceBetween(LatLng(latitude, longitude), (LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
-      final bearing = SphericalUtil.computeAngleBetween(LatLng(latitude, longitude),(LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
+      final deltaDistance = mapsToolkit.SphericalUtil.computeDistanceBetween(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
+      final bearing = mapsToolkit.SphericalUtil.computeAngleBetween(mapsToolkit.LatLng(latitude, longitude),(mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       if(deltaDistance < minDistanceToCollision || ((bearing - heading).abs() < maxAngle && (deltaDistance/speed) < timeToCollision)) {
         sendNotification();
         break;

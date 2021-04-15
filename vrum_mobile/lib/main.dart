@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vrum_mobile/Location.dart';
 import 'package:vrum_mobile/generatePSM.dart';
 import 'package:vrum_mobile/getPSM.dart';
@@ -19,8 +21,29 @@ void main() {
 bool allowLocation = false;
 final LocationProvider locationProvider = LocationProvider();
 final locationStream = locationProvider.locationStream;
+final getPsm = GetPSM();
+Uuid uuid = Uuid();
+String deviceId;
 
-class FirstRoute extends StatelessWidget {
+class FirstRoute extends StatefulWidget {
+
+  Future<void> getPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    deviceId = prefs.getString('device_id');
+    if (deviceId == null) {
+      deviceId = uuid.v4();
+      prefs.setString('device_id', deviceId);
+    }
+  }
+
+  @override
+  _FirstRouteState createState() {
+    getPrefs();
+    return _FirstRouteState();
+  }
+}
+
+class _FirstRouteState extends State<FirstRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,16 +214,26 @@ class CarRoute extends StatelessWidget {
                   }),
               ElevatedButton(
                 onPressed: () {
-                  getPSM(locationStream);
+                  getPsm.startLocationUpdates(locationStream);
                   allowLocation = true;
                 },
                 child: Text("Get Location"),
               ),
               Container(
-                height: 600,
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: CameraPosition(bearing: 180, target: LatLng(47, -105), zoom: 15),
+                height: 400,
+                child: StreamBuilder<Set<Marker>>(
+                  stream: getPsm.vehicleMarkersStream,
+                  builder: (context, snapshot) {
+                    return GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          bearing: 0,
+                          target: LatLng(40.060729, -105.209224),
+                          zoom: 15
+                      ),
+                      markers: snapshot.data ?? Set<Marker>.of([]),
+                    );
+                  }
                 ),
               ),
             ],

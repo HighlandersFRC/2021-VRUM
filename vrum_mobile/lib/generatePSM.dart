@@ -7,6 +7,7 @@ import 'package:background_location/background_location.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
+import 'main.dart' as main;
 import 'models/personal_safety_message.dart';
 
 class generatePSM {
@@ -24,7 +25,7 @@ class generatePSM {
       lon: location.longitude,
       elevation: location.altitude,
     );
-    PersonalSafetyMessage psm = PersonalSafetyMessage(basicType: 'aPEDESTRIAN', secMark: 0, timestamp: currTime, msgCnt: 1, id: uuid.v4(), position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing);
+    PersonalSafetyMessage psm = PersonalSafetyMessage(basicType: 'aPEDESTRIAN', secMark: 0, timestamp: currTime, msgCnt: 1, id: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing);
 
 //     client.postUrl(Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/"))
 //         .then((HttpClientRequest request) {
