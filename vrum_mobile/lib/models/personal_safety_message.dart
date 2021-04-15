@@ -30,6 +30,8 @@ class PersonalSafetyMessage {
 
   factory PersonalSafetyMessage.fromJson(Map<String, dynamic> json) => _$PersonalSafetyMessageFromJson(json);
 
+
+
   Map<String, dynamic> toJson() => _$PersonalSafetyMessageToJson(this);
 }
 

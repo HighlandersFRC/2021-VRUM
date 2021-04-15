@@ -19,8 +19,8 @@ void main() {
 bool allowLocation = false;
 final LocationProvider locationProvider = LocationProvider();
 final locationStream = locationProvider.locationStream;
-class FirstRoute extends StatelessWidget {
 
+class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,28 +28,28 @@ class FirstRoute extends StatelessWidget {
         title: Text('Home Page'),
       ),
       body: Center(
-        child: Column (
-        children: <Widget> [
-          ElevatedButton(
-            child: Text('Pedestrian'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PedestrianRoute()),
-              );
-            },
-          ),
-          ElevatedButton(
-            child: Text('Vehicle'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CarRoute()),
-              );
-            },
-          ),
-        ],
-      ),
+        child: Column(
+          children: <Widget>[
+            ElevatedButton(
+              child: Text('Pedestrian'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PedestrianRoute()),
+                );
+              },
+            ),
+            ElevatedButton(
+              child: Text('Vehicle'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CarRoute()),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -102,6 +102,7 @@ class PedestrianRoute extends StatelessWidget {
   void sendPSM() async {
     print('Sent PSM');
   }
+
   // void main() {
   //   const time = const Duration(seconds: 30);
   //   Timer.periodic(time, (Timer timer) {
@@ -116,33 +117,31 @@ class PedestrianRoute extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-        Center(
-          child: Column (
-            children: [ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Back'),
-
-            ),
+          Center(
+              child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Back'),
+              ),
               // var time = const Duration(//milliseconds: // // seconds: // // minutes: // ...);
               //   Timer.periodic(time, (timer) => {sentPSM()}
               // ),
               StreamBuilder<Location>(
                   stream: locationStream,
                   builder: (context, snapshot) {
-                    if(allowLocation) {
+                    if (allowLocation) {
                       return Text(
                         "Latitude: ${snapshot.data?.latitude}, Latitude: ${snapshot.data?.longitude}",
                       );
-                    }
-                    else {
+                    } else {
                       return Text(
                         "Latitude: null, Longitude: null",
                       );
                     }
-                  }
-              ),
+                  }),
               ElevatedButton(
                 onPressed: () {
                   allowLocation = true;
@@ -151,10 +150,9 @@ class PedestrianRoute extends StatelessWidget {
                 child: Text("Get Location"),
               ),
             ],
-          )
+          )),
+        ],
       ),
-      ],
-    ),
     );
   }
 }
@@ -168,10 +166,9 @@ class CarRoute extends StatelessWidget {
         title: Text("Vehicle"),
       ),
       body: Column(
-      children: <Widget>[
-
-        Center(
-          child: Column (
+        children: <Widget>[
+          Center(
+              child: Column(
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -182,42 +179,35 @@ class CarRoute extends StatelessWidget {
               StreamBuilder<Location>(
                   stream: locationStream,
                   builder: (context, snapshot) {
-                    if(allowLocation) {
+                    if (allowLocation) {
                       return Text(
                         "Latitude: ${snapshot.data?.latitude}, Latitude: ${snapshot.data?.longitude}",
                       );
-                    }
-                    else {
+                    } else {
                       return Text(
-                          "Latitude: null, Longitude: null",
+                        "Latitude: null, Longitude: null",
                       );
                     }
-                  }
-              ),
+                  }),
               ElevatedButton(
                 onPressed: () {
                   getPSM(locationStream);
-                  allowLocation = true;},
+                  allowLocation = true;
+                },
                 child: Text("Get Location"),
               ),
               Container(
                 height: 600,
                 child: GoogleMap(
                   mapType: MapType.normal,
-                  initialCameraPosition: CameraPosition(
-                      bearing: 180,
-                      target: LatLng(47, -105),
-                      zoom: 15
-                  ),
+                  initialCameraPosition: CameraPosition(bearing: 180, target: LatLng(47, -105), zoom: 15),
                 ),
               ),
             ],
-          )
-        ),
-      ],
-    ),
+          )),
+        ],
+      ),
     );
-
   }
 
   // @override
@@ -226,5 +216,3 @@ class CarRoute extends StatelessWidget {
   //   throw UnimplementedError();
   // }
 }
-
-

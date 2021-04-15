@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.vrum_mobile">
+    package="com.vrum.vrummobileapp">
    <application
         android:label="vrum_mobile"
         android:icon="@mipmap/ic_launcher">
@@ -7,7 +7,7 @@
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAOs8o5kASzQFST-D9kJsOMCnIgciFtz_c"/>
         <activity
-            android:name=".MainActivity"
+            android:name="com.vrum.vrummobileapp.MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
