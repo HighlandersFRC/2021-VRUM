@@ -23,6 +23,8 @@ class _BottomBarViewState extends State<BottomBarView>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
+  bool locationTurnedOn = false;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -166,8 +168,14 @@ class _BottomBarViewState extends State<BottomBarView>
                           highlightColor: Colors.transparent,
                           focusColor: Colors.transparent,
                           onTap: () {
-                            generatePSM(locationStream);
-                            widget.addClick();
+                            locationTurnedOn = !locationTurnedOn;
+                            if(locationTurnedOn) {
+                              generatePSM(locationStream);
+                              widget.addClick();
+                            }
+                            else(locationTurnedOn) {
+
+                            }
                           },
                           child: Icon(
                             Icons.add,

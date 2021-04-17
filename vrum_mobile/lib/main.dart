@@ -24,6 +24,8 @@ bool allowLocation = false;
 final LocationProvider locationProvider = LocationProvider();
 final locationStream = locationProvider.locationStream;
 
+final deviceId = "alsdkfjalskdf";
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
