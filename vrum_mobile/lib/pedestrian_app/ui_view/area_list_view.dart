@@ -15,6 +15,7 @@ class AreaListView extends StatefulWidget {
 
 class _AreaListViewState extends State<AreaListView>
     with TickerProviderStateMixin {
+  bool buttonHighlightState = false;
   AnimationController animationController;
   List<String> areaListData = <String>[
     'assets/pedestrian_app/Active_img.png',
@@ -100,7 +101,7 @@ class _AreaListViewState extends State<AreaListView>
   }
 }
 
-class AreaView extends StatelessWidget {
+class AreaView extends StatefulWidget {
   const AreaView({
     Key key,
     this.imagepath,
@@ -108,22 +109,31 @@ class AreaView extends StatelessWidget {
     this.animation,
     this.onPressed,
   }) : super(key: key);
-
   final String imagepath;
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final Function() onPressed;
+  @override
+  _AreaViewState createState() => _AreaViewState();
+}
 
+class _AreaViewState extends State <AreaView>{
+  bool buttonHighlightState;
+  @override
+  void initState() {
+    buttonHighlightState = false;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animationController,
+      animation: widget.animationController,
       builder: (BuildContext context, Widget child) {
         return FadeTransition(
-          opacity: animation,
+          opacity: widget.animation,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation.value), 0.0),
+                0.0, 50 * (1.0 - widget.animation.value), 0.0),
             child: Container(
               decoration: BoxDecoration(
                 color: FitnessAppTheme.white,
@@ -143,17 +153,20 @@ class AreaView extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                  highlightColor: buttonHighlightState ? Colors.blueAccent : Colors.transparent,
                   hoverColor: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   splashColor: FitnessAppTheme.nearlyDarkBlue.withOpacity(0.2),
-                  onTap: onPressed,
+                  onTap: () {
+                    widget.onPressed;
+                    buttonHighlightState = !buttonHighlightState;
+                    },
                   child: Column(
                     children: <Widget>[
                       Padding(
                         padding:
                             const EdgeInsets.only(top: 16, left: 16, right: 16),
-                        child: Image.asset(imagepath),
+                        child: Image.asset(widget.imagepath),
                       ),
                     ],
                   ),

@@ -173,9 +173,9 @@ class _BottomBarViewState extends State<BottomBarView>
                               generatePSM(locationStream);
                               widget.addClick();
                             }
-                            else(locationTurnedOn) {
-
-                            }
+                            // else(locationTurnedOn) {
+                            //
+                            // }
                           },
                           child: Icon(
                             Icons.add,
