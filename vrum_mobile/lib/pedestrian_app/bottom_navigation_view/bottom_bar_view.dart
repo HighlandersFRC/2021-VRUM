@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
 import 'package:vrum_mobile/pedestrian_app/models/tabIcon_data.dart';
 import 'package:vrum_mobile/main.dart';
@@ -176,10 +177,12 @@ class _BottomBarViewState extends State<BottomBarView>
                             if(locationTurnedOn) {
                               generatePSM.startLocationUpdates(locationStream);
                               widget.addClick();
+                              Fluttertoast.showToast(msg: "Started Tracking Location", toastLength: Toast.LENGTH_SHORT);
                               //Icons.stop;
                             }
                             else {
                               generatePSM.stopLocationUpdates();
+                              Fluttertoast.showToast(msg: "Stopped Tracking Location", toastLength: Toast.LENGTH_SHORT);
                             }
                           },
                           child: Icon(

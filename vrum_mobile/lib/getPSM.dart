@@ -70,8 +70,8 @@ class GetPSM {
       Marker marker = Marker(
         markerId: MarkerId(psmFromJSON.id),
         position: LatLng(
-          psmFromJSON.position.lat + rng.nextDouble()/1000,
-          psmFromJSON.position.lon + rng.nextDouble()/1000,
+          psmFromJSON.position.lat,
+          psmFromJSON.position.lon,
         ),
       );
       markers.add(marker);
@@ -98,5 +98,4 @@ class GetPSM {
       flutterTts.speak("You are near a pedestrian!");
     }
   }
-
 }

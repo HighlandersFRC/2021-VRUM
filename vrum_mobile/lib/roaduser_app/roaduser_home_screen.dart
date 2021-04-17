@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -66,13 +67,19 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                       child: Container(
                         child: Stack(
                             children: <Widget>[
-                              GoogleMap(
-                                mapType: MapType.normal,
-                                initialCameraPosition: CameraPosition(
-                                  bearing: 0,
-                                  target: LatLng(40.060729, -105.209224),
-                                  zoom: 15
-                                ),
+                              StreamBuilder<Set<Marker>>(
+                                stream: getPSM.vehicleMarkersStream,
+                                builder: (context, snapshot) {
+                                  return GoogleMap(
+                                    mapType: MapType.normal,
+                                    initialCameraPosition: CameraPosition(
+                                      bearing: 0,
+                                      target: LatLng(40.060729, -105.209224),
+                                      zoom: 15
+                                    ),
+                                    markers: snapshot.data ?? Set <Marker>.of([]),
+                                  );
+                                }
                               ),
                               Align(
                                 alignment: Alignment.bottomCenter,
@@ -82,9 +89,11 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                                         locationTurnedOn = !locationTurnedOn;
                                       });
                                       if(locationTurnedOn) {
+                                        Fluttertoast.showToast(msg: "Started Tracking Location", toastLength: Toast.LENGTH_SHORT);
                                         getPSM.startLocationUpdates(locationStream);
                                       }
                                       else {
+                                        Fluttertoast.showToast(msg: "Stopped Tracking Location", toastLength: Toast.LENGTH_SHORT);
                                         getPSM.stopLocationUpdates();
                                       }
                                     },
