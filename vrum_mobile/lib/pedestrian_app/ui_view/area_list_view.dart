@@ -48,8 +48,8 @@ class _AreaListViewState extends State<AreaListView>
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 30 * (1.0 - widget.mainScreenAnimation.value), 0.0),
-            child: AspectRatio(
-              aspectRatio: 1.0,
+            child: Container(
+              constraints: BoxConstraints.expand(),
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8),
                 child: GridView(
