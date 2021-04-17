@@ -1,115 +1,63 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+import 'package:vrum_mobile/Location.dart';
+import 'package:vrum_mobile/generatePSM.dart';
+import 'package:vrum_mobile/getPSM.dart';
+import 'package:vrum_mobile/app_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:vrum_mobile/navigation_home_screen.dart';
 
-void main() {
-  runApp(MaterialApp(
-    title: 'Navigation Basics',
-    home: FirstRoute(),
-  ));
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((_) => runApp(MyApp()));
 }
+bool allowLocation = false;
+final LocationProvider locationProvider = LocationProvider();
+final locationStream = locationProvider.locationStream;
 
-Position _currentPosition;
+final deviceId = "alsdkfjalskdf";
 
-class FirstRoute extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Platform.isAndroid ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarDividerColor: Colors.grey,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+    return MaterialApp(
+      title: 'Welcome to VRUM',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        textTheme: AppTheme.textTheme,
+        platform: TargetPlatform.iOS,
       ),
-      body: Center(
-        child: Column (
-        children: <Widget> [
-          ElevatedButton(
-            child: Text('Pedestrian'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PedestrianRoute()),
-              );
-            },
-          ),
-          ElevatedButton(
-            child: Text('Vehicle'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CarRoute()),
-              );
-            },
-          ),
-        ],
-      ),
-      ),
+      home: NavigationHomeScreen(),
     );
   }
 }
 
-class PedestrianRoute extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Pedestrian"),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Back'),
-        ),
-      ),
-    );
-  }
-}
+class HexColor extends Color {
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 
-class CarRoute extends StatefulWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Vehicle"),
-      ),
-      body: Column(
-      children: <Widget>[
-        Text(
-        "LAT: ${_currentPosition.latitude}, LNG: ${_currentPosition.longitude}"
-        ),
-        ElevatedButton(
-          child: Text("Get location"),
-          onPressed: () {
-            _getCurrentLocation();
-          },
-        ),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Back'),
-          ),
-        ),
-      ],
-    ),
-    );
-
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
-}
-
-  _getCurrentLocation() async {
-    try {
-      var currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
-    } catch (e) {
-      _currentPosition = null;
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll('#', '');
+    if (hexColor.length == 6) {
+      hexColor = 'FF' + hexColor;
     }
-    return _currentPosition;
+    return int.parse(hexColor, radix: 16);
   }
-
+}
