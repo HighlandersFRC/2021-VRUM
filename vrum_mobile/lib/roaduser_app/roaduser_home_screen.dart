@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'roaduser_app_theme.dart';
 
@@ -56,38 +57,48 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                   children: <Widget>[
                     getAppBarUI(),
                     Expanded(
-                      child: NestedScrollView(
-                        controller: _scrollController,
-                        headerSliverBuilder:
-                            (BuildContext context, bool innerBoxIsScrolled) {
-                          return <Widget>[
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                return Column(
-                                  children: <Widget>[
-                                    getSearchBarUI(),
-                                    getTimeDateUI(),
-                                  ],
-                                );
-                              }, childCount: 1),
-                            ),
-                            SliverPersistentHeader(
-                              pinned: true,
-                              floating: true,
-                              delegate: ContestTabHeader(
-                                getFilterBarUI(),
-                              ),
-                            ),
-                          ];
-                        },
-                        body: Container(
-                          color:
-                              HotelAppTheme.buildLightTheme().backgroundColor,
-
-                        ),
+                      child: Container(
+                    child: GoogleMap(
+                    mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          bearing: 0,
+                          target: LatLng(40.060729, -105.209224),
+                          zoom: 15
                       ),
                     )
+          ),
+                      // child: NestedScrollView(
+                      //   controller: _scrollController,
+                      //   headerSliverBuilder:
+                      //       (BuildContext context, bool innerBoxIsScrolled) {
+                      //     return <Widget>[
+                      //       SliverList(
+                      //         delegate: SliverChildBuilderDelegate(
+                      //             (BuildContext context, int index) {
+                      //           return Column(
+                      //             children: <Widget>[
+                      //               getSearchBarUI(),
+                      //               getTimeDateUI(),
+                      //             ],
+                      //           );
+                      //         }, childCount: 1),
+                      //       ),
+                      //       SliverPersistentHeader(
+                      //         pinned: true,
+                      //         floating: true,
+                      //         delegate: ContestTabHeader(
+                      //           getFilterBarUI(),
+                      //         ),
+                      //       ),
+                      //     ];
+                      //   },
+                      //   body: Container(
+                      //     color:
+                      //         HotelAppTheme.buildLightTheme().backgroundColor,
+                      //
+                      //   ),
+                      ),
+                    // )
                   ],
                 ),
               ),
