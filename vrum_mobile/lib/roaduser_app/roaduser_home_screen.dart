@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:vrum_mobile/getPSM.dart';
+import 'package:vrum_mobile/main.dart';
+import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
 import 'roaduser_app_theme.dart';
 
 class HotelHomeScreen extends StatefulWidget {
@@ -13,6 +16,8 @@ class HotelHomeScreen extends StatefulWidget {
 class _HotelHomeScreenState extends State<HotelHomeScreen>
     with TickerProviderStateMixin {
   AnimationController animationController;
+  GetPSM getPSM = new GetPSM();
+  bool locationTurnedOn;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -21,6 +26,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
 
   @override
   void initState() {
+    locationTurnedOn = false;
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
@@ -58,14 +64,39 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                     getAppBarUI(),
                     Expanded(
                       child: Container(
-                    child: GoogleMap(
-                    mapType: MapType.normal,
-                      initialCameraPosition: CameraPosition(
-                          bearing: 0,
-                          target: LatLng(40.060729, -105.209224),
-                          zoom: 15
-                      ),
-                    )
+                        child: Stack(
+                            children: <Widget>[
+                              GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: CameraPosition(
+                                  bearing: 0,
+                                  target: LatLng(40.060729, -105.209224),
+                                  zoom: 15
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                  child: FloatingActionButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        locationTurnedOn = !locationTurnedOn;
+                                      });
+                                      if(locationTurnedOn) {
+                                        getPSM.startLocationUpdates(locationStream);
+                                      }
+                                      else {
+                                        getPSM.stopLocationUpdates();
+                                      }
+                                    },
+                                    child: Icon(
+                                      locationTurnedOn ? Icons.stop : Icons.play_arrow,
+                                      color: FitnessAppTheme.white,
+                                      size: 40,
+                                    ),
+                                  ),
+                              ),
+                             ],
+                        )
           ),
                       // child: NestedScrollView(
                       //   controller: _scrollController,
