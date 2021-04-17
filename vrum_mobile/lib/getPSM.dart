@@ -92,7 +92,8 @@ class GetPSM {
 
   sendNotification() {
     int currNotiTime = DateTime.now().millisecondsSinceEpoch;
-    if(currNotiTime - prevNotiTime >= 5 * 1000) {
+    if(currNotiTime - prevNotiTime >= 10 * 1000) {
+      prevNotiTime = currNotiTime;
       Fluttertoast.cancel();
       Fluttertoast.showToast(msg: "You are near a pedestrian", toastLength: Toast.LENGTH_SHORT);
       flutterTts.speak("You are near a pedestrian!");
