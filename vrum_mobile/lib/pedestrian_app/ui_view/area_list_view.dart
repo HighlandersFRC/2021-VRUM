@@ -50,7 +50,7 @@ class _AreaListViewState extends State<AreaListView>
             transform: Matrix4.translationValues(
                 0.0, 30 * (1.0 - widget.mainScreenAnimation.value), 0.0),
             child: Container(
-              constraints: BoxConstraints.expand(),
+              height: 400,
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8),
                 child: GridView(
@@ -136,7 +136,7 @@ class _AreaViewState extends State <AreaView>{
                 0.0, 50 * (1.0 - widget.animation.value), 0.0),
             child: Container(
               decoration: BoxDecoration(
-                color: FitnessAppTheme.white,
+                color: buttonHighlightState ? FitnessAppTheme.deactivatedText : FitnessAppTheme.white,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8.0),
                     bottomLeft: Radius.circular(8.0),
@@ -153,13 +153,15 @@ class _AreaViewState extends State <AreaView>{
                 color: Colors.transparent,
                 child: InkWell(
                   focusColor: Colors.transparent,
-                  highlightColor: buttonHighlightState ? Colors.blueAccent : Colors.transparent,
+                  highlightColor: Colors.transparent,
                   hoverColor: Colors.transparent,
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   splashColor: FitnessAppTheme.nearlyDarkBlue.withOpacity(0.2),
                   onTap: () {
                     widget.onPressed;
-                    buttonHighlightState = !buttonHighlightState;
+                    setState(() {
+                      buttonHighlightState = !buttonHighlightState;
+                    });
                     },
                   child: Column(
                     children: <Widget>[

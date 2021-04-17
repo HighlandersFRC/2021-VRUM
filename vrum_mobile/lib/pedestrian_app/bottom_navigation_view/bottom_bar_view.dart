@@ -23,10 +23,12 @@ class _BottomBarViewState extends State<BottomBarView>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
-  bool locationTurnedOn = false;
+  bool locationTurnedOn;
+  GeneratePSM generatePSM = GeneratePSM();
 
   @override
   void initState() {
+    locationTurnedOn = false;
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -168,19 +170,22 @@ class _BottomBarViewState extends State<BottomBarView>
                           highlightColor: Colors.transparent,
                           focusColor: Colors.transparent,
                           onTap: () {
-                            locationTurnedOn = !locationTurnedOn;
+                            setState(() {
+                              locationTurnedOn = !locationTurnedOn;
+                            });
                             if(locationTurnedOn) {
-                              generatePSM(locationStream);
+                              generatePSM.startLocationUpdates(locationStream);
                               widget.addClick();
+                              //Icons.stop;
                             }
-                            // else(locationTurnedOn) {
-                            //
-                            // }
+                            else {
+                              generatePSM.stopLocationUpdates();
+                            }
                           },
                           child: Icon(
-                            Icons.add,
+                            locationTurnedOn ? Icons.stop : Icons.play_arrow,
                             color: FitnessAppTheme.white,
-                            size: 32,
+                            size: 40,
                           ),
                         ),
                       ),
