@@ -10,13 +10,24 @@ import 'package:uuid/uuid.dart';
 import 'main.dart' as main;
 import 'models/personal_safety_message.dart';
 
-class generatePSM {
+class GeneratePSM {
   int prevTime = DateTime.now().millisecondsSinceEpoch;
   final psmStream = BehaviorSubject<PersonalSafetyMessage>();
   HttpClient client = new HttpClient();
   Uuid uuid = Uuid();
-  generatePSM(BehaviorSubject<Location> LocationStream) {
-    LocationStream.listen((location) {filterPSM(location);});
+  StreamSubscription<Location> locationSub;
+  GeneratePSM() {
+
+  }
+
+  startLocationUpdates(BehaviorSubject<Location> LocationStream) {
+    locationSub = LocationStream.listen((location) {filterPSM(location);});
+  }
+
+  stopLocationUpdates() {
+    if (locationSub != null) {
+      locationSub.cancel();
+    }
   }
   // when postPSM is called, it will generate a PSM
   postPSM(Location location, int currTime)  async {
