@@ -51,7 +51,7 @@ class GetPSM {
     final speed = location.speed;
     double timeToCollision = 10;
     final minDistanceToCollision = 80.0;
-    final maxAngle = 30.0;
+    final maxAngle = 45.0;
     var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
     int currTimeBeforeResponse = DateTime.now().millisecondsSinceEpoch;
     var response = await http.get(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'});
@@ -100,14 +100,16 @@ class GetPSM {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
       final deltaDistance = mapsToolkit.SphericalUtil.computeDistanceBetween(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       final bearing = mapsToolkit.SphericalUtil.computeHeading(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
+      final heading_diff = (bearing - heading).abs();
+      final min_heading_diff = min(heading_diff, (360 - heading_diff).abs());
       print("vehicle psm: ");
       print(psm.toJson());
       print("pedestrian psm: ");
       print(psmFromJSON.toJson());
       print("speed: ${speed.toStringAsFixed(2)}, heading: ${heading.toStringAsFixed(2)}, distance: ${deltaDistance.toStringAsFixed(2)}, bearing: ${bearing.toStringAsFixed(2)}");
-      print("heading difference: ${(bearing - heading).abs().toStringAsFixed(2)}, time to collision: ${(deltaDistance/speed).toStringAsFixed(2)}");
+      print("heading difference: ${min_heading_diff.toStringAsFixed(2)}, time to collision: ${(deltaDistance/speed).toStringAsFixed(2)}");
       print("notification: ${deltaDistance < minDistanceToCollision} || (${(bearing - heading).abs() < maxAngle} && ${ (deltaDistance/speed) < timeToCollision}) = ${deltaDistance < minDistanceToCollision || ((bearing - heading).abs() < maxAngle && (deltaDistance/speed) < timeToCollision)}");
-      if(deltaDistance < minDistanceToCollision || (/*(bearing - heading).abs() < maxAngle && */(deltaDistance/speed) < timeToCollision)) {
+      if(deltaDistance < minDistanceToCollision || (min_heading_diff < maxAngle && (deltaDistance/speed) < timeToCollision)) {
         sendNotification();
         break;
       }
