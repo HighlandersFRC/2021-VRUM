@@ -59,8 +59,14 @@ class GetPSM {
     final markers = Set<Marker>.of([]);
     final ids = [];
     final rng = new Random();
+
+    int currTimeReceived = DateTime.now().millisecondsSinceEpoch;
+    int highestTimeStamp = 0;
     for (final psm in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(psm);
+      if (psmFromJSON.timestamp > highestTimeStamp) {
+        highestTimeStamp = psmFromJSON.timestamp;
+      }
       if (ids.contains(psmFromJSON.id)) {
         continue;
       }
@@ -76,17 +82,22 @@ class GetPSM {
       );
       markers.add(marker);
     }
+    print('Shortest time delta: ${(currTimeReceived - highestTimeStamp)/1000}');
     vehicleMarkersStream.add(markers);
 
-    for(final i in jsonBody['psms']) {
+    for(final i in jsonBody['psms'][0]) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
       final deltaDistance = mapsToolkit.SphericalUtil.computeDistanceBetween(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       final bearing = mapsToolkit.SphericalUtil.computeAngleBetween(mapsToolkit.LatLng(latitude, longitude),(mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
+
+      print(psmFromJSON.toJson());
+      print("speed: ${speed.toStringAsFixed(2)}, heading: ${heading.toStringAsFixed(2)}, distance: ${deltaDistance.toStringAsFixed(2)}, bearing: ${bearing.toStringAsFixed(2)}");
+      print("heading difference: ${(bearing - heading).abs().toStringAsFixed(2)}, time to collision: ${(deltaDistance/speed).toStringAsFixed(2)}");
+      print("notification: ${deltaDistance < minDistanceToCollision} || (${(bearing - heading).abs() < maxAngle} && ${ (deltaDistance/speed) < timeToCollision}) = ${deltaDistance < minDistanceToCollision || ((bearing - heading).abs() < maxAngle && (deltaDistance/speed) < timeToCollision)}");
       if(deltaDistance < minDistanceToCollision || (/*(bearing - heading).abs() < maxAngle && */(deltaDistance/speed) < timeToCollision)) {
         sendNotification();
         break;
       }
-      print(psmFromJSON.toJson());
     }
   }
 
