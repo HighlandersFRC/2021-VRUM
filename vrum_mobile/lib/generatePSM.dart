@@ -32,8 +32,10 @@ class GeneratePSM {
   // when postPSM is called, it will generate a PSM
   postPSM(Location location, int currTime)  async {
     Position position = Position(
-      lat: location.latitude,
-      lon: location.longitude,
+      lat: 40.059182,
+      lon: -105.215997,
+      // lat: location.latitude,
+      // lon: location.longitude,
       elevation: location.altitude,
     );
     PersonalSafetyMessage psm = PersonalSafetyMessage(basicType: 'aPEDESTRIAN', secMark: 0, timestamp: currTime, msgCnt: 1, id: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing);
