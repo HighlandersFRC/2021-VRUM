@@ -44,6 +44,7 @@ class GetPSM {
   }
 
   readPSM(Location location, int dateTime) async {
+    print('-----');
     final latitude = location.latitude;
     final longitude = location.longitude;
     final heading = location.bearing;
@@ -52,15 +53,25 @@ class GetPSM {
     final minDistanceToCollision = 80.0;
     final maxAngle = 30.0;
     var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
+    int currTimeBeforeResponse = DateTime.now().millisecondsSinceEpoch;
     var response = await http.get(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'});
+    int currTimeAfterResponse = DateTime.now().millisecondsSinceEpoch;
+    print('response time: ${(currTimeAfterResponse - currTimeBeforeResponse) / 1000}');
     final body = response.body;
     final jsonBody = JsonDecoder().convert(body);
-    print(jsonBody);
     final markers = Set<Marker>.of([]);
     final ids = [];
     final rng = new Random();
 
-    int currTimeReceived = DateTime.now().millisecondsSinceEpoch;
+    int currTime = DateTime.now().millisecondsSinceEpoch;
+
+    Position position = Position(
+      lat: location.latitude,
+      lon: location.longitude,
+      elevation: location.altitude,
+    );
+    PersonalSafetyMessage psm = PersonalSafetyMessage(basicType: 'aPEDESTRIAN', secMark: 0, timestamp: currTime, msgCnt: 1, id: "vehicle", position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing);
+
     int highestTimeStamp = 0;
     for (final psm in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(psm);
@@ -82,14 +93,16 @@ class GetPSM {
       );
       markers.add(marker);
     }
-    print('Shortest time delta: ${(currTimeReceived - highestTimeStamp)/1000}');
+    print('Shortest time delta: ${(currTime - highestTimeStamp)/1000}');
     vehicleMarkersStream.add(markers);
 
-    for(final i in jsonBody['psms'][0]) {
+    for(final i in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
       final deltaDistance = mapsToolkit.SphericalUtil.computeDistanceBetween(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
-      final bearing = mapsToolkit.SphericalUtil.computeAngleBetween(mapsToolkit.LatLng(latitude, longitude),(mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
-
+      final bearing = mapsToolkit.SphericalUtil.computeHeading(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
+      print("vehicle psm: ");
+      print(psm.toJson());
+      print("pedestrian psm: ");
       print(psmFromJSON.toJson());
       print("speed: ${speed.toStringAsFixed(2)}, heading: ${heading.toStringAsFixed(2)}, distance: ${deltaDistance.toStringAsFixed(2)}, bearing: ${bearing.toStringAsFixed(2)}");
       print("heading difference: ${(bearing - heading).abs().toStringAsFixed(2)}, time to collision: ${(deltaDistance/speed).toStringAsFixed(2)}");
@@ -98,6 +111,7 @@ class GetPSM {
         sendNotification();
         break;
       }
+      break;
     }
   }
 
