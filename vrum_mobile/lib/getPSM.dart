@@ -65,13 +65,6 @@ class GetPSM {
 
     int currTime = DateTime.now().millisecondsSinceEpoch;
 
-    Position position = Position(
-      lat: location.latitude,
-      lon: location.longitude,
-      elevation: location.altitude,
-    );
-    PersonalSafetyMessage psm = PersonalSafetyMessage(basicType: 'aPEDESTRIAN', secMark: 0, timestamp: currTime, msgCnt: 1, id: "vehicle", position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing);
-
     int highestTimeStamp = 0;
     for (final psm in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(psm);
@@ -102,18 +95,11 @@ class GetPSM {
       final bearing = mapsToolkit.SphericalUtil.computeHeading(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       final heading_diff = (bearing - heading).abs();
       final min_heading_diff = min(heading_diff, (360 - heading_diff).abs());
-      print("vehicle psm: ");
-      print(psm.toJson());
-      print("pedestrian psm: ");
-      print(psmFromJSON.toJson());
-      print("speed: ${speed.toStringAsFixed(2)}, heading: ${heading.toStringAsFixed(2)}, distance: ${deltaDistance.toStringAsFixed(2)}, bearing: ${bearing.toStringAsFixed(2)}");
-      print("heading difference: ${min_heading_diff.toStringAsFixed(2)}, time to collision: ${(deltaDistance/speed).toStringAsFixed(2)}");
-      print("notification: ${deltaDistance < minDistanceToCollision} || (${(bearing - heading).abs() < maxAngle} && ${ (deltaDistance/speed) < timeToCollision}) = ${deltaDistance < minDistanceToCollision || ((bearing - heading).abs() < maxAngle && (deltaDistance/speed) < timeToCollision)}");
       if(deltaDistance < minDistanceToCollision || (min_heading_diff < maxAngle && (deltaDistance/speed) < timeToCollision)) {
+        print("collision imminent: ${deltaDistance < minDistanceToCollision} || (${min_heading_diff < maxAngle} && ${(deltaDistance/speed) < timeToCollision})");
         sendNotification();
         break;
       }
-      break;
     }
   }
 
