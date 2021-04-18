@@ -49,7 +49,7 @@ class GetPSM {
     final heading = location.bearing;
     final speed = location.speed;
     double timeToCollision = 10;
-    final minDistanceToCollision = 20.0;
+    final minDistanceToCollision = 80.0;
     final maxAngle = 30.0;
     var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
     var response = await http.get(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'});
@@ -82,7 +82,7 @@ class GetPSM {
       final psmFromJSON = PersonalSafetyMessage.fromJson(i);
       final deltaDistance = mapsToolkit.SphericalUtil.computeDistanceBetween(mapsToolkit.LatLng(latitude, longitude), (mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
       final bearing = mapsToolkit.SphericalUtil.computeAngleBetween(mapsToolkit.LatLng(latitude, longitude),(mapsToolkit.LatLng(psmFromJSON.position.lat, psmFromJSON.position.lon)));
-      if(deltaDistance < minDistanceToCollision || ((bearing - heading).abs() < maxAngle && (deltaDistance/speed) < timeToCollision)) {
+      if(deltaDistance < minDistanceToCollision || (/*(bearing - heading).abs() < maxAngle && */(deltaDistance/speed) < timeToCollision)) {
         sendNotification();
         break;
       }

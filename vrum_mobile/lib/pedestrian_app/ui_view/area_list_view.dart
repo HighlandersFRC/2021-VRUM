@@ -25,11 +25,29 @@ class _AreaListViewState extends State<AreaListView>
     'assets/pedestrian_app/Crosswalk_img.png',
     'assets/pedestrian_app/Walker_dog_img.png',
   ];
+  List<bool> isSelectedList;
+
+  void buttonPressed(indexPressed) {
+    final _isSelectedList = isSelectedList;
+    isSelectedList.asMap().forEach((index, value) {
+      if (indexPressed == index) {
+        _isSelectedList[index] = !value;
+      }
+      else {
+        _isSelectedList[index] = false;
+      }
+    });
+
+    setState(() {
+      isSelectedList = _isSelectedList;
+    });
+  }
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
+    isSelectedList = List.filled(areaListData.length, false);
     super.initState();
   }
 
@@ -49,8 +67,8 @@ class _AreaListViewState extends State<AreaListView>
           child: Transform(
             transform: Matrix4.translationValues(
                 0.0, 30 * (1.0 - widget.mainScreenAnimation.value), 0.0),
-            child: AspectRatio(
-              aspectRatio: .1,
+            child: Container(
+              height: areaListData.length * 100.0,
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8),
                 child: GridView(
@@ -76,12 +94,9 @@ class _AreaListViewState extends State<AreaListView>
                         animation: animation,
                         animationController: animationController,
                         onPressed: () {
-                          Fluttertoast.showToast(
-                              msg: "Pressed Button $index",
-                              toastLength: Toast.LENGTH_SHORT,
-                          );
-                          
-                        }
+                          buttonPressed(index);
+                        },
+                        isSelected: isSelectedList[index],
                       );
                     },
                   ),
@@ -102,26 +117,26 @@ class _AreaListViewState extends State<AreaListView>
 }
 
 class AreaView extends StatefulWidget {
-  const AreaView({
+  AreaView({
     Key key,
     this.imagepath,
     this.animationController,
     this.animation,
     this.onPressed,
+    this.isSelected,
   }) : super(key: key);
   final String imagepath;
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final Function() onPressed;
+  bool isSelected;
   @override
   _AreaViewState createState() => _AreaViewState();
 }
 
 class _AreaViewState extends State <AreaView>{
-  bool buttonHighlightState;
   @override
   void initState() {
-    buttonHighlightState = false;
     super.initState();
   }
   @override
@@ -136,7 +151,7 @@ class _AreaViewState extends State <AreaView>{
                 0.0, 50 * (1.0 - widget.animation.value), 0.0),
             child: Container(
               decoration: BoxDecoration(
-                color: buttonHighlightState ? FitnessAppTheme.deactivatedText : FitnessAppTheme.white,
+                color: widget.isSelected ? FitnessAppTheme.deactivatedText : FitnessAppTheme.white,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8.0),
                     bottomLeft: Radius.circular(8.0),
@@ -158,9 +173,9 @@ class _AreaViewState extends State <AreaView>{
                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   splashColor: FitnessAppTheme.nearlyDarkBlue.withOpacity(0.2),
                   onTap: () {
-                    widget.onPressed;
+                    widget.onPressed();
                     setState(() {
-                      buttonHighlightState = !buttonHighlightState;
+                      widget.isSelected = !widget.isSelected;
                     });
                     },
                   child: Column(
