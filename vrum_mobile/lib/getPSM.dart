@@ -10,6 +10,8 @@ import 'package:maps_toolkit/maps_toolkit.dart' as mapsToolkit;
 import 'package:rxdart/rxdart.dart';
 import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/material.dart';
+import 'package:vrum_mobile/roaduser_app/roaduser_home_screen.dart';
 
 class GetPSM {
   FlutterTts flutterTts = FlutterTts();
@@ -23,8 +25,8 @@ class GetPSM {
 
   }
 
-  startLocationUpdates(BehaviorSubject<Location> LocationStream) {
-    locationSub = LocationStream.listen((location) {timePSM(location);});
+  startLocationUpdates(BehaviorSubject<Location> locationStream) {
+    locationSub = locationStream.listen((location) {timePSM(location); setMapCameraLocation(location);});
   }
 
   stopLocationUpdates() {
@@ -83,6 +85,7 @@ class GetPSM {
           psmFromJSON.position.lat,
           psmFromJSON.position.lon,
         ),
+        icon: pedestrianIcon,
       );
       markers.add(marker);
     }

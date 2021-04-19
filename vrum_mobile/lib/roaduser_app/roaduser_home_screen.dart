@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +9,24 @@ import 'package:vrum_mobile/getPSM.dart';
 import 'package:vrum_mobile/main.dart';
 import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
 import 'roaduser_app_theme.dart';
+
+
+
+BitmapDescriptor pedestrianIcon;
+GoogleMapController _mapController;
+
+void onMapCreated(controller) {
+  _mapController = controller;
+}
+
+void setMapCameraLocation(Location location) => _mapController.animateCamera(
+  CameraUpdate.newCameraPosition(
+    CameraPosition(
+      target: LatLng(location.latitude, location.longitude),
+      zoom: 15,
+    ),
+  ),
+);
 
 class HotelHomeScreen extends StatefulWidget {
   @override
@@ -27,10 +46,15 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
 
   @override
   void initState() {
+    super.initState();
+
     locationTurnedOn = false;
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
-    super.initState();
+
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(), 'assets/pedestrian_app/Active_img_small.png')
+        .then((value) => pedestrianIcon = value);
   }
 
   Future<bool> getData() async {
@@ -71,6 +95,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                                 stream: getPSM.vehicleMarkersStream,
                                 builder: (context, snapshot) {
                                   return GoogleMap(
+                                    onMapCreated: onMapCreated,
                                     mapType: MapType.normal,
                                     initialCameraPosition: CameraPosition(
                                       bearing: 0,
@@ -105,40 +130,9 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                                   ),
                               ),
                              ],
-                        )
-          ),
-                      // child: NestedScrollView(
-                      //   controller: _scrollController,
-                      //   headerSliverBuilder:
-                      //       (BuildContext context, bool innerBoxIsScrolled) {
-                      //     return <Widget>[
-                      //       SliverList(
-                      //         delegate: SliverChildBuilderDelegate(
-                      //             (BuildContext context, int index) {
-                      //           return Column(
-                      //             children: <Widget>[
-                      //               getSearchBarUI(),
-                      //               getTimeDateUI(),
-                      //             ],
-                      //           );
-                      //         }, childCount: 1),
-                      //       ),
-                      //       SliverPersistentHeader(
-                      //         pinned: true,
-                      //         floating: true,
-                      //         delegate: ContestTabHeader(
-                      //           getFilterBarUI(),
-                      //         ),
-                      //       ),
-                      //     ];
-                      //   },
-                      //   body: Container(
-                      //     color:
-                      //         HotelAppTheme.buildLightTheme().backgroundColor,
-                      //
-                      //   ),
+                          )
+                        ),
                       ),
-                    // )
                   ],
                 ),
               ),
