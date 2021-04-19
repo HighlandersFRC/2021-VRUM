@@ -13,12 +13,12 @@ if (flutterRoot == null) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+    flutterVersionCode = '2'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
+    flutterVersionName = '2'
 }
 
 apply plugin: 'com.android.application'
@@ -37,10 +37,11 @@ android {
         applicationId "com.vrum.vrum_mobileApp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode flutterVersionCode.toInteger()
+        versionCode 2
         versionName flutterVersionName
-    }
 
+    }
+//versionCode flutterVersionCode.toInteger()
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -49,6 +50,8 @@ android {
         }
     }
 }
+
+
 
 flutter {
     source '../..'

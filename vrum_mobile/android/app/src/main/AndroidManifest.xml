@@ -2,7 +2,7 @@
     package="com.vrum.vrummobileapp">
    <application
         android:label="vrum_mobile"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher_vrumlogo">
 
 
         <meta-data android:name="com.google.android.geo.API_KEY"

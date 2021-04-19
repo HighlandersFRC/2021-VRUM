@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -79,6 +79,7 @@ flutter:
         - asset: assets/fonts/Roboto-Regular.ttf
         - asset: assets/fonts/Roboto-Medium.ttf
           weight: 400
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -109,3 +110,23 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+# Security Store for deplying to sotre
+ # What is your first and last name?
+ # [Unknown]:  Debbie English
+ # What is the name of your organizational unit?
+ # [Unknown]:  VRUM
+ # What is the name of your organization?
+ # [Unknown]:  VRUM
+ # What is the name of your City or Locality?
+ # [Unknown]:  Fort Collins
+ # What is the name of your State or Province?
+ # [Unknown]:  CO
+ # What is the two-letter country code for this unit?
+ # [Unknown]:  CO
+ # Is CN=Debbie English, OU=VRUM, O=VRUM, L=Fort Collins, ST=CO, C=CO correct?
+ # [no]:  yes
+  #Password:4499VRUM!
+  #Alias - key PSW 4499VRUM!
+#Location: C:\users\debbie\key_FRUM.jks
+  #[Storing VRUM_Keystore.keystore]
+  #updated the version number  in the build.gradel update  versionCode 2 to another number
