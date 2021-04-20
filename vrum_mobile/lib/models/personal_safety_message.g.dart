@@ -10,10 +10,10 @@ PersonalSafetyMessage _$PersonalSafetyMessageFromJson(
     Map<String, dynamic> json) {
   return PersonalSafetyMessage(
     basicType: json['basicType'] as String,
-    secMark: json['secMark'] as int,
     timestamp: json['timestamp'] as int,
     msgCnt: json['msgCnt'] as int,
     id: json['id'] as String,
+    deviceId: json['deviceId'] as String,
     position: json['position'] == null
         ? null
         : Position.fromJson(json['position'] as Map<String, dynamic>),
@@ -25,7 +25,6 @@ PersonalSafetyMessage _$PersonalSafetyMessageFromJson(
             ? null
             : PathHistoryPoint.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    deviceId: json['deviceId'] as String,
   );
 }
 
@@ -33,16 +32,15 @@ Map<String, dynamic> _$PersonalSafetyMessageToJson(
         PersonalSafetyMessage instance) =>
     <String, dynamic>{
       'basicType': instance.basicType,
-      'secMark': instance.secMark,
       'timestamp': instance.timestamp,
       'msgCnt': instance.msgCnt,
       'id': instance.id,
       'deviceId': instance.deviceId,
-      'pathHistory': instance.pathHistory,
       'position': instance.position,
       'accuracy': instance.accuracy,
       'speed': instance.speed,
       'heading': instance.heading,
+      'pathHistory': instance.pathHistory,
     };
 
 PathHistoryPoint _$PathHistoryPointFromJson(Map<String, dynamic> json) {
@@ -66,6 +64,7 @@ Map<String, dynamic> _$PathHistoryPointToJson(PathHistoryPoint instance) =>
 
 VruNotification _$VruNotificationFromJson(Map<String, dynamic> json) {
   return VruNotification(
+    id: json['id'] as String,
     vehiclePsmId: json['vehiclePsmId'] as String,
     vruPsmId: json['vruPsmId'] as String,
     timeToCollision: (json['timeToCollision'] as num)?.toDouble(),
@@ -84,14 +83,15 @@ VruNotification _$VruNotificationFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$VruNotificationToJson(VruNotification instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'timestamp': instance.timestamp,
       'vehiclePsmId': instance.vehiclePsmId,
       'vruPsmId': instance.vruPsmId,
+      'vruDeviceId': instance.vruDeviceId,
+      'vehicleDeviceId': instance.vehicleDeviceId,
       'timeToCollision': instance.timeToCollision,
       'distance': instance.distance,
       'reason': instance.reason,
-      'timestamp': instance.timestamp,
-      'vruDeviceId': instance.vruDeviceId,
-      'vehicleDeviceId': instance.vehicleDeviceId,
       'pathHistory': instance.pathHistory,
     };
 

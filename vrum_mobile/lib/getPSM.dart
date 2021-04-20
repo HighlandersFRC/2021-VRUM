@@ -5,18 +5,22 @@ import 'dart:math';
 import 'package:background_location/background_location.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:maps_toolkit/maps_toolkit.dart' as mapsToolkit;
 import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vrum_mobile/apiController.dart';
 import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'main.dart' as main;
+
 
 class GetPSM {
   FlutterTts flutterTts = FlutterTts();
   HttpClient client = new HttpClient();
   int prevTime = DateTime.now().millisecondsSinceEpoch;
   int prevNotiTime = DateTime.now().millisecondsSinceEpoch;
+  Uuid uuid = Uuid();
+  List<PathHistoryPoint> pathHistory = [];
   BehaviorSubject<Set<Marker>> vehicleMarkersStream = BehaviorSubject<Set<Marker>>();
   StreamSubscription<Location> locationSub;
   ApiController apiController = ApiController();
@@ -63,6 +67,20 @@ class GetPSM {
 
     int currTime = DateTime.now().millisecondsSinceEpoch;
 
+    Position position = Position(
+      lat: location.latitude,
+      lon: location.longitude,
+      elevation: location.altitude,
+    );
+    PersonalSafetyMessage vehiclePsm = PersonalSafetyMessage(id: uuid.v4(), basicType: "vehicle", timestamp: currTime, msgCnt: 1, deviceId: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing, pathHistory: pathHistory);
+    apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/", JsonEncoder().convert(vehiclePsm.toJson()));
+
+    final pathPoint = PathHistoryPoint(position: position, timestamp: currTime, speed: location.speed, heading: location.bearing);
+    if(pathHistory.length >= 10) {
+      pathHistory.removeAt(0);
+    }
+    pathHistory.add(pathPoint);
+
     int highestTimeStamp = 0;
     for (final psm in jsonBody['psms']) {
       final psmFromJSON = PersonalSafetyMessage.fromJson(psm);
@@ -95,19 +113,40 @@ class GetPSM {
       final min_heading_diff = min(heading_diff, (360 - heading_diff).abs());
       if(deltaDistance < minDistanceToCollision || (min_heading_diff < maxAngle && (deltaDistance/speed) < timeToCollision)) {
         print("collision imminent: ${deltaDistance < minDistanceToCollision} || (${min_heading_diff < maxAngle} && ${(deltaDistance/speed) < timeToCollision})");
-        sendNotification();
+        if (shouldShowNotification()) {
+          sendNotification();
+          final notification = VruNotification(
+              id: uuid.v4(),
+              vehiclePsmId: vehiclePsm.id,
+              vruPsmId: psmFromJSON.id,
+              timeToCollision: timeToCollision,
+              distance: deltaDistance,
+              reason: "because",
+              timestamp: currTime,
+              pathHistory: pathHistory,
+              vehicleDeviceId: vehiclePsm.deviceId,
+              vruDeviceId: psmFromJSON.deviceId);
+          apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/notifications/", JsonEncoder().convert(notification.toJson()));
+        }
         break;
       }
     }
   }
 
-  sendNotification() {
-    int currNotiTime = DateTime.now().millisecondsSinceEpoch;
-    if(currNotiTime - prevNotiTime >= 10 * 1000) {
+  shouldShowNotification() {
+    int currNotiTime = DateTime
+        .now()
+        .millisecondsSinceEpoch;
+    if (currNotiTime - prevNotiTime >= 10 * 1000) {
       prevNotiTime = currNotiTime;
+      return true;
+    }
+    return false;
+  }
+
+  sendNotification() {
       Fluttertoast.cancel();
       Fluttertoast.showToast(msg: "You are near a pedestrian", toastLength: Toast.LENGTH_SHORT);
       flutterTts.speak("You are near a pedestrian!");
-    }
   }
 }

@@ -13,8 +13,9 @@ class ApiController {
     if(token.token_expires <= currentTime) {
       token = await getAuthToken();
     }
-    print(token.access_token);
-    final response = await http.post(Uri.parse(url), body: body, headers: {"Bearer": token.access_token});
+    // print(token.access_token);
+    // final response = await http.post(Uri.parse(url), body: body, headers: {"apikey": "9994912f-7d93-402a-9d55-77d7c748704c"});
+    final response = await http.post(Uri.parse(url), body: body, headers: {"Authorization": "Bearer ${token.access_token}"});
     print(response.statusCode);
     return response;
   }
@@ -24,7 +25,10 @@ class ApiController {
     if(token.token_expires <= currentTime) {
       token = await getAuthToken();
     }
-    return await http.get(Uri.parse(url), headers: {"Bearer": token.access_token});
+    // final response = await http.get(Uri.parse(url), headers: {"apikey": "9994912f-7d93-402a-9d55-77d7c748704c"});
+    final response = await http.get(Uri.parse(url), headers: {"Authorization": "Bearer ${token.access_token}"});
+    print(response.statusCode);
+    return response;
   }
 
   Future<ApiToken> getAuthToken() async{

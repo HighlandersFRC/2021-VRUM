@@ -39,7 +39,7 @@ class GeneratePSM {
       lon: location.longitude,
       elevation: location.altitude,
     );
-    PersonalSafetyMessage psm = PersonalSafetyMessage(id: uuid.v4(), basicType: pedestrianType, secMark: 0, timestamp: currTime, msgCnt: 1, deviceId: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing, pathHistory: pathHistory);
+    PersonalSafetyMessage psm = PersonalSafetyMessage(id: uuid.v4(), basicType: pedestrianType, timestamp: currTime, msgCnt: 1, deviceId: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing, pathHistory: pathHistory);
 
 //     client.postUrl(Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/"))
 //         .then((HttpClientRequest request) {
@@ -60,7 +60,6 @@ class GeneratePSM {
 
     psmStream.add(psm);
 
-    var client = http.Client();
     apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/", JsonEncoder().convert(psm.toJson()));
   }
   // when filterPSM is called, it will check whether there is a new location and whether enough time has passed in between PSMs
