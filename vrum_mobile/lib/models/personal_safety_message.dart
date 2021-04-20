@@ -9,6 +9,8 @@ class PersonalSafetyMessage {
   final int timestamp;
   final int msgCnt;
   final String id;
+  final String deviceId;
+  final List<PathHistoryPoint> pathHistory;
 
   @JsonSerializable()
   final Position position;
@@ -26,13 +28,44 @@ class PersonalSafetyMessage {
     this.accuracy,
     this.speed,
     this.heading,
+    this.pathHistory,
+    this.deviceId,
   });
 
   factory PersonalSafetyMessage.fromJson(Map<String, dynamic> json) => _$PersonalSafetyMessageFromJson(json);
 
-
-
   Map<String, dynamic> toJson() => _$PersonalSafetyMessageToJson(this);
+}
+
+@JsonSerializable()
+class PathHistoryPoint {
+  final Position position;
+  final int timestamp;
+  final double speed;
+  final double heading;
+
+  PathHistoryPoint({this.position, this.timestamp, this.speed, this.heading});
+
+  factory PathHistoryPoint.fromJson(Map<String, dynamic> json) => _$PathHistoryPointFromJson(json);
+  Map<String, dynamic> toJson() => _$PathHistoryPointToJson(this);
+}
+
+@JsonSerializable()
+class VruNotification {
+  final String vehiclePsmId;
+  final String vruPsmId;
+  final double timeToCollision;
+  final double distance;
+  final String reason;
+  final int timestamp;
+  final String vruDeviceId;
+  final String vehicleDeviceId;
+  final List<PathHistoryPoint> pathHistory;
+
+  VruNotification({this.vehiclePsmId, this.vruPsmId, this.timeToCollision, this.distance, this.reason, this.timestamp, this.pathHistory, this.vehicleDeviceId, this.vruDeviceId,});
+
+  factory VruNotification.fromJson(Map<String, dynamic> json) => _$VruNotificationFromJson(json);
+  Map<String, dynamic> toJson() => _$VruNotificationToJson(this);
 }
 
 @JsonSerializable()

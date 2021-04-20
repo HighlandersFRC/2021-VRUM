@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../pedestrian_app_theme.dart';
 
+String pedestrianType = "Walker";
+
 class AreaListView extends StatefulWidget {
   const AreaListView(
       {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
@@ -26,12 +28,14 @@ class _AreaListViewState extends State<AreaListView>
     'assets/pedestrian_app/Walker_dog_img.png',
   ];
   List<bool> isSelectedList;
+  List<String> pedestrianTypeList;
 
   void buttonPressed(indexPressed) {
     final _isSelectedList = isSelectedList;
     isSelectedList.asMap().forEach((index, value) {
       if (indexPressed == index) {
         _isSelectedList[index] = !value;
+        pedestrianType = pedestrianTypeList[index];
       }
       else {
         _isSelectedList[index] = false;
@@ -48,6 +52,8 @@ class _AreaListViewState extends State<AreaListView>
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     isSelectedList = List.filled(areaListData.length, false);
+    pedestrianTypeList = <String>["Runner", "Biker", "VisuallyImpaired", "Wheelchair", "Children", "Walker"];
+    pedestrianType = "Walker";
     super.initState();
   }
 
