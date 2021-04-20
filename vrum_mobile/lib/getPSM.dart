@@ -73,7 +73,7 @@ class GetPSM {
       elevation: location.altitude,
     );
     PersonalSafetyMessage vehiclePsm = PersonalSafetyMessage(id: uuid.v4(), basicType: "vehicle", timestamp: currTime, msgCnt: 1, deviceId: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing, pathHistory: pathHistory);
-    apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/", JsonEncoder().convert(vehiclePsm.toJson()));
+    apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/vehicle-psm/", JsonEncoder().convert(vehiclePsm.toJson()));
 
     final pathPoint = PathHistoryPoint(position: position, timestamp: currTime, speed: location.speed, heading: location.bearing);
     if(pathHistory.length >= 10) {

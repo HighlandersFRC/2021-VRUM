@@ -41,23 +41,6 @@ class GeneratePSM {
     );
     PersonalSafetyMessage psm = PersonalSafetyMessage(id: uuid.v4(), basicType: pedestrianType, timestamp: currTime, msgCnt: 1, deviceId: main.deviceId, position: position, accuracy: location.accuracy, speed: location.speed, heading: location.bearing, pathHistory: pathHistory);
 
-//     client.postUrl(Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/"))
-//         .then((HttpClientRequest request) {
-// // Optionally set up headers...
-//       request.headers.add("apikey",'9994912f-7d93-402a-9d55-77d7c748704c');
-//       final msg = JsonEncoder().convert(psm.toJson()); //.withIndent("    ")
-//       print(msg);
-//       request.write(msg);
-// // Optionally write to the request object...
-// // Then call close.
-//       return request.close();
-//     })
-//         .then((HttpClientResponse response) {
-// // Process the response.
-//       print(response.statusCode);
-//       print(response.reasonPhrase);
-//     });
-
     psmStream.add(psm);
 
     apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/", JsonEncoder().convert(psm.toJson()));
