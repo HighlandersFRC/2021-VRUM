@@ -60,7 +60,7 @@ class GeneratePSM {
 
     var client = http.Client();
     try {
-      var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/vru/");
+      var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/");
       var response = await http.post(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'}, body: JsonEncoder().convert(psm.toJson()));
       print(response.statusCode);
     } finally {
