@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:maps_toolkit/maps_toolkit.dart' as mapsToolkit;
 import 'package:rxdart/rxdart.dart';
+import 'package:vrum_mobile/apiController.dart';
 import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -18,6 +19,7 @@ class GetPSM {
   int prevNotiTime = DateTime.now().millisecondsSinceEpoch;
   BehaviorSubject<Set<Marker>> vehicleMarkersStream = BehaviorSubject<Set<Marker>>();
   StreamSubscription<Location> locationSub;
+  ApiController apiController = ApiController();
 
   GetPSM() {
 
@@ -52,11 +54,7 @@ class GetPSM {
     double timeToCollision = 10;
     final minDistanceToCollision = 80.0;
     final maxAngle = 45.0;
-    var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
-    int currTimeBeforeResponse = DateTime.now().millisecondsSinceEpoch;
-    var response = await http.get(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'});
-    int currTimeAfterResponse = DateTime.now().millisecondsSinceEpoch;
-    print('response time: ${(currTimeAfterResponse - currTimeBeforeResponse) / 1000}');
+    final response = await apiController.getApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
     final body = response.body;
     final jsonBody = JsonDecoder().convert(body);
     final markers = Set<Marker>.of([]);

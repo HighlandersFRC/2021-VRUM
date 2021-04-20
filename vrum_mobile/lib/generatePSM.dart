@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:background_location/background_location.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vrum_mobile/apiController.dart';
 
 import 'main.dart' as main;
 import 'models/personal_safety_message.dart';
@@ -15,8 +16,9 @@ class GeneratePSM {
   final psmStream = BehaviorSubject<PersonalSafetyMessage>();
   HttpClient client = new HttpClient();
   Uuid uuid = Uuid();
-  List<PathHistoryPoint> pathHistory;
+  List<PathHistoryPoint> pathHistory = [];
   StreamSubscription<Location> locationSub;
+  ApiController apiController = ApiController();
   GeneratePSM() {
 
   }
@@ -59,14 +61,7 @@ class GeneratePSM {
     psmStream.add(psm);
 
     var client = http.Client();
-    try {
-      var url = Uri.parse("https://vrum-rest-api.azurewebsites.net/psm/");
-      var response = await http.post(url, headers : {"apikey":'9994912f-7d93-402a-9d55-77d7c748704c'}, body: JsonEncoder().convert(psm.toJson()));
-      print(response.statusCode);
-    } finally {
-      client.close();
-    }
-
+    apiController.postApiRequest("https://vrum-rest-api.azurewebsites.net/secure/psm/", JsonEncoder().convert(psm.toJson()));
   }
   // when filterPSM is called, it will check whether there is a new location and whether enough time has passed in between PSMs
   filterPSM(Location location, pedestrianType, {int intervalSeconds = 1}) {
@@ -82,6 +77,9 @@ class GeneratePSM {
         elevation: location.altitude,
       );
       var pathPoint = PathHistoryPoint(position: position, timestamp: currTime, speed: location.speed, heading: location.bearing);
+      if(pathHistory.length >= 10) {
+        pathHistory.removeAt(0);
+      }
       pathHistory.add(pathPoint);
     }
   }
