@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,6 +17,21 @@ class HotelHomeScreen extends StatefulWidget {
 
 BitmapDescriptor pedestrianIcon;
 BitmapDescriptor vehicleIcon;
+GoogleMapController _mapController;
+
+void onMapCreated(controller) {
+  _mapController = controller;
+}
+
+void setMapCameraLocation(Location location) => _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(location.latitude, location.longitude),
+          zoom: 15,
+          bearing: location.bearing,
+        ),
+      ),
+    );
 
 class _HotelHomeScreenState extends State<HotelHomeScreen>
     with TickerProviderStateMixin {
@@ -87,6 +103,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                                       target: LatLng(40.060729, -105.209224),
                                       zoom: 15),
                                   markers: snapshot.data ?? Set<Marker>.of([]),
+                                  onMapCreated: onMapCreated,
                                 );
                               }),
                           Align(

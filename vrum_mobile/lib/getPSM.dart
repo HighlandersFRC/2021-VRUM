@@ -129,6 +129,7 @@ class GetPSM {
       icon: vehicleIcon,
     );
     markers.add(vehicleMarker);
+    setMapCameraLocation(location);
     print('Shortest time delta: ${(currTime - highestTimeStamp) / 1000}');
     vehicleMarkersStream.add(markers);
 
