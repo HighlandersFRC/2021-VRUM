@@ -28,7 +28,7 @@ void setMapCameraLocation(Location location) => _mapController.animateCamera(
         CameraPosition(
           target: LatLng(location.latitude, location.longitude),
           zoom: 15,
-          bearing: location.bearing,
+          //bearing: location.bearing,
         ),
       ),
     );
