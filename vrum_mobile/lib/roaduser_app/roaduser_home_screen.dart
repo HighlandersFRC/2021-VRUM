@@ -1,18 +1,21 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:vrum_mobile/getPSM.dart';
 import 'package:vrum_mobile/main.dart';
 import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
+
 import 'roaduser_app_theme.dart';
 
 class HotelHomeScreen extends StatefulWidget {
   @override
   _HotelHomeScreenState createState() => _HotelHomeScreenState();
 }
+
+BitmapDescriptor pedestrianIcon;
+BitmapDescriptor vehicleIcon;
 
 class _HotelHomeScreenState extends State<HotelHomeScreen>
     with TickerProviderStateMixin {
@@ -31,6 +34,13 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     super.initState();
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(), 'assets/pedestrian_app/Active_img_small.png')
+        .then((value) => pedestrianIcon = value);
+
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(), 'assets/fitness_app/VehicleSmall.png')
+        .then((value) => vehicleIcon = value);
   }
 
   Future<bool> getData() async {
@@ -65,48 +75,50 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                     getAppBarUI(),
                     Expanded(
                       child: Container(
-                        child: Stack(
-                            children: <Widget>[
-                              StreamBuilder<Set<Marker>>(
-                                stream: getPSM.vehicleMarkersStream,
-                                builder: (context, snapshot) {
-                                  return GoogleMap(
-                                    mapType: MapType.normal,
-                                    initialCameraPosition: CameraPosition(
+                          child: Stack(
+                        children: <Widget>[
+                          StreamBuilder<Set<Marker>>(
+                              stream: getPSM.vehicleMarkersStream,
+                              builder: (context, snapshot) {
+                                return GoogleMap(
+                                  mapType: MapType.normal,
+                                  initialCameraPosition: CameraPosition(
                                       bearing: 0,
                                       target: LatLng(40.060729, -105.209224),
-                                      zoom: 15
-                                    ),
-                                    markers: snapshot.data ?? Set <Marker>.of([]),
-                                  );
+                                      zoom: 15),
+                                  markers: snapshot.data ?? Set<Marker>.of([]),
+                                );
+                              }),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                setState(() {
+                                  locationTurnedOn = !locationTurnedOn;
+                                });
+                                if (locationTurnedOn) {
+                                  Fluttertoast.showToast(
+                                      msg: "Started Tracking Location",
+                                      toastLength: Toast.LENGTH_SHORT);
+                                  getPSM.startLocationUpdates(locationStream);
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: "Stopped Tracking Location",
+                                      toastLength: Toast.LENGTH_SHORT);
+                                  getPSM.stopLocationUpdates();
                                 }
+                              },
+                              child: Icon(
+                                locationTurnedOn
+                                    ? Icons.stop
+                                    : Icons.play_arrow,
+                                color: FitnessAppTheme.white,
+                                size: 40,
                               ),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                  child: FloatingActionButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        locationTurnedOn = !locationTurnedOn;
-                                      });
-                                      if(locationTurnedOn) {
-                                        Fluttertoast.showToast(msg: "Started Tracking Location", toastLength: Toast.LENGTH_SHORT);
-                                        getPSM.startLocationUpdates(locationStream);
-                                      }
-                                      else {
-                                        Fluttertoast.showToast(msg: "Stopped Tracking Location", toastLength: Toast.LENGTH_SHORT);
-                                        getPSM.stopLocationUpdates();
-                                      }
-                                    },
-                                    child: Icon(
-                                      locationTurnedOn ? Icons.stop : Icons.play_arrow,
-                                      color: FitnessAppTheme.white,
-                                      size: 40,
-                                    ),
-                                  ),
-                              ),
-                             ],
-                        )
-          ),
+                            ),
+                          ),
+                        ],
+                      )),
                       // child: NestedScrollView(
                       //   controller: _scrollController,
                       //   headerSliverBuilder:
@@ -137,7 +149,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                       //         HotelAppTheme.buildLightTheme().backgroundColor,
                       //
                       //   ),
-                      ),
+                    ),
                     // )
                   ],
                 ),
@@ -178,12 +190,9 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
     );
   }
 
-
-
   Widget getTimeDateUI() {
     return Padding(
       padding: const EdgeInsets.only(left: 18, bottom: 16),
-
     );
   }
 
@@ -208,11 +217,9 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                         blurRadius: 8.0),
                   ],
                 ),
-
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -243,9 +250,7 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
           child: Padding(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 4),
-            child: Row(
-
-            ),
+            child: Row(),
           ),
         ),
         const Positioned(
@@ -259,7 +264,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
       ],
     );
   }
-
 
   Widget getAppBarUI() {
     return Container(
@@ -287,7 +291,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                   borderRadius: const BorderRadius.all(
                     Radius.circular(32.0),
                   ),
-
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(Icons.arrow_back),
@@ -306,7 +309,6 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
                 ),
               ),
             ),
-
           ],
         ),
       ),
