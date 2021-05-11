@@ -1,13 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vrum_mobile/app_theme.dart';
 import 'package:vrum_mobile/custom_drawer/drawer_user_controller.dart';
 import 'package:vrum_mobile/custom_drawer/home_drawer.dart';
 import 'package:vrum_mobile/help_screen.dart';
 import 'package:vrum_mobile/home_screen.dart';
-import 'package:flutter/material.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
   _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
+}
+
+showDialogIfFirstLoaded(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstLoaded = prefs.getBool('is_first_loaded');
+  print(isFirstLoaded);
+  if (isFirstLoaded == null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Notification"),
+          content: new Text(
+              "V.R.U.M collects location data to enable the generation of Personal Safety Messages and Proximity Warnings even when the app is closed or not in use."),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new TextButton(
+              child: new Text("Dismiss"),
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+                prefs.setBool('is_first_loaded', false);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
@@ -23,6 +54,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration.zero, () => showDialogIfFirstLoaded(context));
     return Container(
       color: AppTheme.nearlyWhite,
       child: SafeArea(
@@ -56,8 +88,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         setState(() {
           screenView = HelpScreen();
         });
-      }
-else {
+      } else {
         //do in your way......
       }
     }

@@ -57,7 +57,7 @@ class GetPSM {
     final heading = location.bearing;
     final speed = location.speed;
     double timeToCollision = 10;
-    final minDistanceToCollision = 80.0;
+    final minDistanceToCollision = 200.0;
     final maxAngle = 45.0;
     final response = await apiController.getApiRequest(
         "https://vrum-rest-api.azurewebsites.net/secure/psm/?latitude=$latitude&longitude=$longitude&datetime=$dateTime");
