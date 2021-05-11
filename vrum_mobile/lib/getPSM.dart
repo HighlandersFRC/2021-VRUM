@@ -14,8 +14,6 @@ import 'package:vrum_mobile/apiController.dart';
 import 'package:vrum_mobile/models/personal_safety_message.dart';
 import 'package:vrum_mobile/roaduser_app/roaduser_home_screen.dart';
 
-import 'main.dart' as main;
-
 class GetPSM {
   FlutterTts flutterTts = FlutterTts();
   HttpClient client = new HttpClient();
@@ -79,7 +77,7 @@ class GetPSM {
         basicType: "vehicle",
         timestamp: currTime,
         msgCnt: 1,
-        deviceId: main.deviceId,
+        deviceId: apiController.token.access_token,
         position: position,
         accuracy: location.accuracy,
         speed: location.speed,
