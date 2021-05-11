@@ -15,6 +15,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   AnimationController animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
+  bool isRecordingEnabled = false;
 
   Widget tabBody = Container(
     color: FitnessAppTheme.background,

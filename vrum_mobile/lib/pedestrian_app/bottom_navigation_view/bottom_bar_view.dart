@@ -4,6 +4,7 @@ import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
 import 'package:vrum_mobile/pedestrian_app/models/tabIcon_data.dart';
 import 'package:vrum_mobile/main.dart';
 import 'package:flutter/material.dart';
+import 'package:vrum_mobile/pedestrian_app/ui_view/area_list_view.dart';
 import '../../generatePSM.dart';
 import '../../main.dart';
 import '../models/tabIcon_data.dart';
@@ -175,7 +176,7 @@ class _BottomBarViewState extends State<BottomBarView>
                               locationTurnedOn = !locationTurnedOn;
                             });
                             if(locationTurnedOn) {
-                              generatePSM.startLocationUpdates(locationStream);
+                              generatePSM.startLocationUpdates(locationStream, pedestrianType);
                               widget.addClick();
                               Fluttertoast.showToast(msg: "Started Tracking Location", toastLength: Toast.LENGTH_SHORT);
                               //Icons.stop;
