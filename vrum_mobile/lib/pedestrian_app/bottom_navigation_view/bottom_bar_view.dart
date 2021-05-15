@@ -1,10 +1,13 @@
 import 'dart:math' as math;
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
-import 'package:vrum_mobile/pedestrian_app/models/tabIcon_data.dart';
-import 'package:vrum_mobile/main.dart';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:vrum_mobile/main.dart';
+import 'package:vrum_mobile/pedestrian_app/models/tabIcon_data.dart';
+import 'package:vrum_mobile/pedestrian_app/pedestrian_app_theme.dart';
 import 'package:vrum_mobile/pedestrian_app/ui_view/area_list_view.dart';
+
 import '../../generatePSM.dart';
 import '../../main.dart';
 import '../models/tabIcon_data.dart';
@@ -29,7 +32,7 @@ class _BottomBarViewState extends State<BottomBarView>
   GeneratePSM generatePSM = GeneratePSM();
 
   @override
-  void initState() {
+  Future<void> initState() async {
     locationTurnedOn = false;
     animationController = AnimationController(
       vsync: this,
@@ -37,6 +40,40 @@ class _BottomBarViewState extends State<BottomBarView>
     );
     animationController.forward();
     super.initState();
+  }
+
+  showDialogIfNoLocation(BuildContext context) async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      setState(() {
+        locationTurnedOn = !locationTurnedOn;
+      });
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return AlertDialog(
+              title: new Text("Notification"),
+              content: new Text(
+                  "V.R.U.M collects location data to enable the generation of Personal Safety Messages and Proximity Warnings even when the app is closed or not in use."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                new TextButton(
+                    child: new Text("Accept"),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        locationTurnedOn = !locationTurnedOn;
+                      });
+                    }
+                    // Close the dialog
+                    ),
+              ],
+            );
+          });
+      Permission.location.request;
+    }
   }
 
   @override
@@ -172,18 +209,20 @@ class _BottomBarViewState extends State<BottomBarView>
                           highlightColor: Colors.transparent,
                           focusColor: Colors.transparent,
                           onTap: () {
-                            setState(() {
-                              locationTurnedOn = !locationTurnedOn;
-                            });
-                            if(locationTurnedOn) {
-                              generatePSM.startLocationUpdates(locationStream, pedestrianType);
+                            showDialogIfNoLocation(context);
+                            if (locationTurnedOn) {
+                              generatePSM.startLocationUpdates(
+                                  locationStream, pedestrianType);
                               widget.addClick();
-                              Fluttertoast.showToast(msg: "Started Tracking Location", toastLength: Toast.LENGTH_SHORT);
+                              Fluttertoast.showToast(
+                                  msg: "Started Tracking Location",
+                                  toastLength: Toast.LENGTH_SHORT);
                               //Icons.stop;
-                            }
-                            else {
+                            } else {
                               generatePSM.stopLocationUpdates();
-                              Fluttertoast.showToast(msg: "Stopped Tracking Location", toastLength: Toast.LENGTH_SHORT);
+                              Fluttertoast.showToast(
+                                  msg: "Stopped Tracking Location",
+                                  toastLength: Toast.LENGTH_SHORT);
                             }
                           },
                           child: Icon(
