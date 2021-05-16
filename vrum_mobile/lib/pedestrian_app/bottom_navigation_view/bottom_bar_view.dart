@@ -32,7 +32,7 @@ class _BottomBarViewState extends State<BottomBarView>
   GeneratePSM generatePSM = GeneratePSM();
 
   @override
-  Future<void> initState() async {
+  initState() {
     locationTurnedOn = false;
     animationController = AnimationController(
       vsync: this,
@@ -61,7 +61,7 @@ class _BottomBarViewState extends State<BottomBarView>
                 // usually buttons at the bottom of the dialog
                 new TextButton(
                     child: new Text("Accept"),
-                    onPressed: () async {
+                    onPressed: () {
                       Navigator.of(context).pop();
                       setState(() {
                         locationTurnedOn = !locationTurnedOn;
