@@ -47,7 +47,8 @@ class _BottomBarViewState extends State<BottomBarView>
     if (status.isGranted) {
       return true;
     } else {
-      showDialog(
+      bool agreed = false;
+      await showDialog(
           context: context,
           builder: (BuildContext context) {
             // return object of type Dialog
@@ -61,7 +62,7 @@ class _BottomBarViewState extends State<BottomBarView>
                     child: new Text("Accept"),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      return true;
+                      agreed = true;
                     }
                     // Close the dialog
                     ),
@@ -69,14 +70,14 @@ class _BottomBarViewState extends State<BottomBarView>
                     child: new Text("Disagree"),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      return false;
+                      agreed = false;
                     }
                     // Close the dialog
                     ),
               ],
             );
           });
-      return false;
+      return agreed;
       //Permission.location.request;
     }
   }
@@ -215,19 +216,25 @@ class _BottomBarViewState extends State<BottomBarView>
                           focusColor: Colors.transparent,
                           onTap: () {
                             showDialogIfNoLocation(context).then((value) {
-                              if (!value && locationTurnedOn) {
+                              print(value);
+                              if (!value && !locationTurnedOn) {
                                 return;
                               }
                               setState(() {
                                 locationTurnedOn = !locationTurnedOn;
                               });
                               if (locationTurnedOn) {
-                                generatePSM.startLocationUpdates(
-                                    locationStream, pedestrianType);
-                                widget.addClick();
-                                Fluttertoast.showToast(
-                                    msg: "Started Tracking Location",
-                                    toastLength: Toast.LENGTH_SHORT);
+                                locationProvider.requestLocationPermissions(
+                                    onGrantedCallback: () {
+                                      generatePSM.startLocationUpdates(
+                                          locationStream, pedestrianType);
+                                      widget.addClick();
+                                      Fluttertoast.showToast(
+                                          msg: "Started Tracking Location",
+                                          toastLength: Toast.LENGTH_SHORT);
+                                    },
+                                    onDeniedCallback: () {});
+
                                 //Icons.stop;
                               } else {
                                 generatePSM.stopLocationUpdates();
