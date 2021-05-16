@@ -42,12 +42,10 @@ class _BottomBarViewState extends State<BottomBarView>
     super.initState();
   }
 
-  showDialogIfNoLocation(BuildContext context) async {
+  Future<bool> showDialogIfNoLocation(BuildContext context) async {
     var status = await Permission.location.status;
     if (status.isGranted) {
-      setState(() {
-        locationTurnedOn = !locationTurnedOn;
-      });
+      return true;
     } else {
       showDialog(
           context: context,
@@ -63,16 +61,23 @@ class _BottomBarViewState extends State<BottomBarView>
                     child: new Text("Accept"),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      setState(() {
-                        locationTurnedOn = !locationTurnedOn;
-                      });
+                      return true;
+                    }
+                    // Close the dialog
+                    ),
+                new TextButton(
+                    child: new Text("Disagree"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      return false;
                     }
                     // Close the dialog
                     ),
               ],
             );
           });
-      Permission.location.request;
+      return false;
+      //Permission.location.request;
     }
   }
 
@@ -209,21 +214,28 @@ class _BottomBarViewState extends State<BottomBarView>
                           highlightColor: Colors.transparent,
                           focusColor: Colors.transparent,
                           onTap: () {
-                            showDialogIfNoLocation(context);
-                            if (locationTurnedOn) {
-                              generatePSM.startLocationUpdates(
-                                  locationStream, pedestrianType);
-                              widget.addClick();
-                              Fluttertoast.showToast(
-                                  msg: "Started Tracking Location",
-                                  toastLength: Toast.LENGTH_SHORT);
-                              //Icons.stop;
-                            } else {
-                              generatePSM.stopLocationUpdates();
-                              Fluttertoast.showToast(
-                                  msg: "Stopped Tracking Location",
-                                  toastLength: Toast.LENGTH_SHORT);
-                            }
+                            showDialogIfNoLocation(context).then((value) {
+                              if (!value && locationTurnedOn) {
+                                return;
+                              }
+                              setState(() {
+                                locationTurnedOn = !locationTurnedOn;
+                              });
+                              if (locationTurnedOn) {
+                                generatePSM.startLocationUpdates(
+                                    locationStream, pedestrianType);
+                                widget.addClick();
+                                Fluttertoast.showToast(
+                                    msg: "Started Tracking Location",
+                                    toastLength: Toast.LENGTH_SHORT);
+                                //Icons.stop;
+                              } else {
+                                generatePSM.stopLocationUpdates();
+                                Fluttertoast.showToast(
+                                    msg: "Stopped Tracking Location",
+                                    toastLength: Toast.LENGTH_SHORT);
+                              }
+                            });
                           },
                           child: Icon(
                             locationTurnedOn ? Icons.stop : Icons.play_arrow,
